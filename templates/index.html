@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мой гараж</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="user-panel">
+        {% if current_user.is_authenticated %}
+            <div class="greeting">
+                <span class="welcome">Привет</span>
+                <span class="username">{{ current_user.username }}</span>
+            </div>
+            <a href="/logout" class="logout-btn">Выйти</a>
+        {% endif %}
+    </div>
+    <div id="carsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Список автомобилей</h2>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Поиск по названию..." class="search-input">
+            </div>
+            <ul class="car-list" id="carsList"></ul>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Мой гараж</h1>
+        <button id="showCarsBtn" class="btn">Показать список машин</button>
+        <div id="carInfoContainer" class="car-details">
+            <h2 id="carName"></h2>
+            <div class="car-specs">
+                <p>Год выпуска: <span id="carYear"></span></p>
+                <p>Цвет: <span id="carColor"></span></p>
+                <p>Пробег: <span id="carMileage"></span> км</p>
+                <p>Двигатель: <span id="carEngine"></span></p>
+                <p>Мощность: <span id="carPower"></span> л.с.</p>
+                <p>Коробка: <span id="carTransmission"></span></p>
+                <p>Привод: <span id="carDrive"></span></p>
+                <p>Цена: <span id="carPrice"></span> руб.</p>
+            </div>
+            <div class="car-features">
+                <div class="feature-category">
+                    <h4>Комфорт</h4>
+                    <div class="features-grid" id="comfortFeatures"></div>
+                </div>
+                <div class="feature-category">
+                    <h4>Безопасность</h4>
+                    <div class="features-grid" id="safetyFeatures"></div>
+                </div>
+                
+                <div class="feature-category">
+                    <h4>Мультимедиа</h4>
+                    <div class="features-grid" id="mediaFeatures"></div>
+                </div>
+            </div>
+            <button id="backBtn" class="btn back-btn">Назад к списку</button>
+        </div>
+    </div>
+    <div id="carsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Список автомобилей</h2>
+            <ul class="car-list" id="carsList">
+            </ul>
+        </div>
+    </div>
+    <script>
+        const modal = document.getElementById("carsModal");
+        const btn = document.getElementById("showCarsBtn");
+        const span = document.getElementsByClassName("close")[0];
+        const carsList = document.getElementById("carsList");
+        const carInfoContainer = document.getElementById("carInfoContainer");
+        const carName = document.getElementById("carName");
+        const carYear = document.getElementById("carYear");
+        const carColor = document.getElementById("carColor");
+        const carMileage = document.getElementById("carMileage");
+        const carEngine = document.getElementById("carEngine");
+        const carPower = document.getElementById("carPower");
+        const carTransmission = document.getElementById("carTransmission");
+        const carDrive = document.getElementById("carDrive");
+        const carPrice = document.getElementById("carPrice");
+        const comfortFeatures = document.getElementById("comfortFeatures");
+        const safetyFeatures = document.getElementById("safetyFeatures");
+        const mediaFeatures = document.getElementById("mediaFeatures");
+        const backBtn = document.getElementById("backBtn");
+        carInfoContainer.style.display = "none";
+        async function loadCars() {
+    try {
+        const response = await fetch('/api/cars');
+        const cars = await response.json();
+        carsList.innerHTML = '';
+        cars.forEach(car => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="car-card">  
+                    <h3>${car.name}</h3>
+            `;
+            li.dataset.car = JSON.stringify(car);
+            carsList.appendChild(li);
+        });
+    } catch (error) {
+        console.error('Ошибка:', error);
+        carsList.innerHTML = '<li>Ошибка загрузки данных</li>';
+    }
+}
+        btn.onclick = function() {
+            loadCars();
+            modal.style.display = "block";
+        }
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        carsList.addEventListener('click', function(e) {
+            const listItem = e.target.closest('li');
+            if (listItem) {
+                const carData = JSON.parse(listItem.getAttribute('data-car'));
+                displayCarInfo(carData);
+            }
+        });
+        function displayCarInfo(carData) {
+            carName.textContent = carData.name;
+            carYear.textContent = carData.year;
+            carColor.textContent = carData.color;
+            carMileage.textContent = carData.mileage;
+            carEngine.textContent = carData.engine;
+            carPower.textContent = carData.power;
+            carTransmission.textContent = carData.transmission;
+            carDrive.textContent = carData.drive;
+            carPrice.textContent = carData.price.toLocaleString();
+            renderFeatures(comfortFeatures, carData.comfort);
+            renderFeatures(safetyFeatures, carData.safety);
+            renderFeatures(mediaFeatures, carData.media);
+            modal.style.display = "none";
+            carInfoContainer.style.display = "block";
+            btn.style.display = "none";
+        }
+        function renderFeatures(container, features) {
+            container.innerHTML = '';
+            features.forEach(feature => {
+                const item = document.createElement('div');
+                item.className = 'feature-item';
+                item.textContent = feature;
+                container.appendChild(item);
+            });
+        }
+        backBtn.onclick = function() {
+            carInfoContainer.style.display = "none";
+            btn.style.display = "block";
+        }
+        const searchInput = document.getElementById('searchInput');
+        function filterCars(cars, searchTerm) {
+            return cars.filter(car => 
+                car.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+        async function loadCars(searchTerm = '') {
+            try {
+                const response = await fetch('/api/cars');
+                const cars = await response.json();
+                carsList.innerHTML = '';
+                
+                const filteredCars = searchTerm ? filterCars(cars, searchTerm) : cars;
+                
+                if (filteredCars.length === 0) {
+                    carsList.innerHTML = '<li>Чуток ошибся и тут ничего нет</li>';
+                    return;
+                }
+                filteredCars.forEach(car => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div class="car-card">  
+                            <h3>${car.name}</h3>
+                            <p>${car.year} год, ${car.price.toLocaleString()} руб.</p>
+                        </div>
+                    `;
+                    li.dataset.car = JSON.stringify(car);
+                    carsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Ошибка:', error);
+                carsList.innerHTML = '<li>Ошибка загрузки данных</li>';
+            }
+        }
+        searchInput.addEventListener('input', (e) => {
+            loadCars(e.target.value);
+        });
+        btn.onclick = function() {
+            loadCars();
+            modal.style.display = "block";
+            searchInput.value = ''; 
+            searchInput.focus(); 
+        }
+    </script>
+</body>
+</html>

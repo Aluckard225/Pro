@@ -1,0 +1,139 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #000 0%, hsl(280, 98%, 17%) 50%, #000 100%);
+    color: #9d4edd;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+    background: rgba(20,20,40,.9);
+    padding: 30px;
+}
+
+h1{
+    color: #9d4edd;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.btn {
+    display: block;
+    width: 250px;
+    margin: 20px auto;
+    padding: 12px 20px;
+    text-align: center;
+    background:#7b2cbf;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,);
+    z-index: 100;
+}
+
+.modal-content {
+    background: #180142;
+    margin: 5% auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 70vh; 
+    overflow-y: auto; 
+    border-radius: 12px;
+}
+
+.car-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.car-list li {
+    padding: 20px;
+    background:  #230260;
+    cursor: pointer;
+}
+
+.car-specs {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.car-specs p {
+    background: rgba(70,30,100,.3);
+    color: #9d4edd;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.features-grid {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.feature-item {
+    padding: 10px;
+    background: rgba(90,50,130,.2);
+    text-align: center;
+    border-radius: 6px;
+}
+
+.user-panel {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.logout-btn {
+    padding: 10px 25px;
+    background: rgba(157,78,221,.15);
+    color: #9d4edd;
+    border-radius: 8px;
+}
+
+.search-input {
+    width: 96%;
+    padding: 8px 12px;
+    background-color: #340062;
+    border-radius: 4px; 
+    font-size: 16px;    
+}
+
+.sort-controls {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    align-items: center;
+}
+
+.sort-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    flex-grow: 1;
+}
+
+.small-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+}
